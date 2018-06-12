@@ -1,0 +1,118 @@
+%
+% texample.tex - LaTeX example file
+%
+% 24May16  Everett Lipman
+%
+\documentclass[12pt]{article}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+
+% Uncomment one of the following lines to use Times-Roman and Helvetica
+% or Palatino instead of Computer Modern.
+% \usepackage{txfonts}
+% \usepackage[sc]{mathpazo}\linespread{1.05}\usepackage[scaled]{helvet}
+
+\usepackage[hmargin=90bp,tmargin=108bp,bmargin=72bp,
+            headheight=15bp,footskip=40bp]{geometry}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% custom definitions
+%
+\newcommand\thisis{Crypto Currency Market Analysis}
+\newcommand\theauthor{Evan~Azevedo}
+
+\newcommand\sfb{\sffamily\bfseries}
+
+\newcommand\red[1]{\textcolor{red}{\sffamily\bfseries #1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% custom heading and footer
+%
+\fancypagestyle{firstpg}
+   {
+   \fancyhf{}%
+   \cfoot{\sffamily\thepage}%
+   \renewcommand\headrulewidth{0bp}
+   }
+
+\pagestyle{fancy}
+\lhead{\sffamily \thisis}
+\chead{}
+\rhead{\sffamily \theauthor}
+
+\lfoot{}
+\cfoot{\sffamily\thepage}
+\rfoot{}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\thispagestyle{firstpg}
+
+\noindent
+{\sffamily\bfseries\huge \thisis}\\
+
+\noindent
+{\large\sffamily \theauthor}
+
+\vspace*{20bp}
+
+\noindent
+In order to install the packages necessary to run the current version of the project, please run this code in shell:
+
+\lstset{language=UNIX}
+\begin{lstlisting}
+pip3 install gdax argparse
+\end{lstlisting}
+
+No external hardware is required in running this project.
+
+
+The form of the normal distribution that the samples estimate is:
+\begin{equation}
+G(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}
+\end{equation}
+with mean $\mu = Np$ and standard deviation $\sigma = \sqrt{Npq}$ for N trials
+with probability of sucess $p$ and probability of failure $q$.
+
+%------------------------------------------------------------------------------
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=300bp]{p6_hw8.eps}
+\vspace{-18bp}
+\end{center}
+\caption[]{\label{fig:sim}\small
+The plot of 1,000 simulations of coin tosses. This histogram has 25 bins, and is overlayed with the normal distribution that it approximates. Taller bars have more observations and represent that more simulations fell within that bin. The graph is normalized to 1, so the height of each bar is in a probabilistic space.}
+\end{figure}
+%------------------------------------------------------------------------------
+
+
+
+\end{document}
+
