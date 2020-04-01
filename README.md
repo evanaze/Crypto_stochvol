@@ -1,6 +1,7 @@
 # Crypto Stoch Vol
 This is my final project for UCSB PHYS 129L - Intro to Scientific Computing.
 Volatility analysis using the Heston Stochastic Volatility model on synthetic options of cryptocurrencies available on Coinbase in Python using GDAX API.
+The writeup and results of this project are available in the `/docs/` directory.
 
 ## Usage
 This program is tested with Python version 3.7.
