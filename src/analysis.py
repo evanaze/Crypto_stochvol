@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-""" We define the market price of a call option with strike K and maturity T 
+""" We define the market price of a call option with strike K and maturity T
 	C(K_i, T_i). The price of the stock is modeled by the Heston Stochastic
 	volatility model, where the price of the stock at time t S_t has variance
-	v_t such that the variance approaches some long-term variance v_bar that 
+	v_t such that the variance approaches some long-term variance v_bar that
 	it approaches at rate k with volatility sigma and correlation between
 	its proccess and the process of the stock price rho.
 
@@ -187,8 +187,8 @@ def LM(S_0_dat, K_dat, V_dat, T):
 		algorithm.
 	"""
 	global ndat
-	
-	ndat = len(K_dat)	
+
+	ndat = len(K_dat)
 	# The initial guess at theta
 	theta = np.array([2.0, 0.10, -0.80, 3.00, 0.25]).reshape(5,)
 
@@ -199,6 +199,7 @@ def LM(S_0_dat, K_dat, V_dat, T):
 
 	print("\nCalibrating...")
 	N = 2000 # max iterations
+	print(f"\nMax Iterations: {N}")
 	v = 2 # inital variance
 	for i in range(N):
 		theta[0] = v
@@ -215,7 +216,7 @@ def LM(S_0_dat, K_dat, V_dat, T):
 		dL = np.dot(dtheta.reshape(1,5), mu*dtheta.reshape(5,1) + deltaf)
 		dF = f - f1
 		if i % 15 == 0:
-			print("\nIteration %s. Current parameters: %s" % (i, theta))
+			print("Iteration %s. Current parameters: %s" % (i, theta))
 		if dF > 0 and dL > 0:
 			theta = theta_k1
 			v = theta[0]
