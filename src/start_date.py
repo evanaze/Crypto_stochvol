@@ -8,7 +8,6 @@ import os.path
 from time import sleep
 import numpy as np
 import gdax
-import argparse
 
 
 ###########################################################################

@@ -9,8 +9,6 @@
 
 	In this script, we use Cui's method of calibrating this stochastic
 	volatility model.
-	From here, we can determine the fair price of the stock using a different
-	script, `fair_price.py`.
 """
 
 import numpy as np
@@ -192,15 +190,16 @@ def LM(S_0_dat, K_dat, V_dat, T):
 	
 	ndat = len(K_dat)	
 	# The initial guess at theta
-	theta = np.array([0.08, 0.10, -0.80, 3.00, 0.25]).reshape(5,)
+	theta = np.array([2.0, 0.10, -0.80, 3.00, 0.25]).reshape(5,)
 
 	# Parameters for optimization
 	e = np.ones((ndat, 1))
-	thresh = 1e-8   # Threshold
+	thresh1 = 1e-6   # Threshold
+	thresh2 = 1e-8
 
 	print("\nCalibrating...")
-	N = 10000 # number of steps
-	v = 2
+	N = 2000 # max iterations
+	v = 2 # inital variance
 	for i in range(N):
 		theta[0] = v
 		res = r(theta, S_0_dat, K_dat, V_dat, T)
@@ -223,29 +222,29 @@ def LM(S_0_dat, K_dat, V_dat, T):
 		else:
 			mu = mu*v
 			v = 2*v
-		if f <= thresh:
+		if f <= thresh1:
 			print("\nCondition 1 met:")
-			print("Objective function minimized")
-			return theta
+			print("Objective function minimized\n")
+			return theta, T
 			break
-		if np.linalg.norm(J*e) <= thresh:
+		if np.linalg.norm(J*e) <= thresh2:
 			print("\nCondition 2 met:")
-			print("Small gradient step")
-			return theta
+			print("Small gradient step\n")
+			return theta, T
 			break
-		if np.linalg.norm(dtheta)/np.linalg.norm(theta) <= thresh:
+		if np.linalg.norm(dtheta)/np.linalg.norm(theta) <= thresh2:
 			print("\nCondition 3 met:")
-			print("Stagnating update")
-			return theta
+			print("Stagnating update\n")
+			return theta, T
 			break
 	print("\nThe calibration did not converge.\n")
+	return theta, T
 
 
 if __name__ == "__main__":
-	import gdax, portfolio
-
+	import gdax
 	S_0_dat, K_dat, V_dat, T, coin = load()
-	theta = LM(theta, S_0_dat, K_dat, V_dat, T)
+	theta = LM(S_0_dat, K_dat, V_dat, T)
 	print("Final parameters:", theta)
 	# Get the current info of the coin
 	pc = gdax.PublicClient()

@@ -21,36 +21,46 @@ def prompt_samp():
 	done = False
 	while done != True:
 		inp1 = input('\nWhich coin to sample from?\n1: Bitcoin\n2: Etherium\n3: Bitcoin Cash\n4: Litecoin\n')
-		inp2 = input('\nHow many points to sample?\nWarning: sampling time is approximately 6 points a minute to avoid overloading the server.\n')
-		try:
-			T
-		except NameError:
-			T = 90
-		inp3 = input('\nWould you like to consider a different maturity? (y/n)\nCurrent maturity: %s days   ' % (T))
 		try:
 			idx = int(inp1) - 1
 			Coins = ['BTC-USD', 'ETH-USD', 'BCH-USD', 'LTC-USD']
 			Cid = Coins[idx]
-		except Exception:
+			done = True
+		except ValueError:
 			print("Unable to select product ID")
-
+	done = False
+	while done != True:
+		inp2 = input('\nHow many points to sample?\nWarning: sampling time is approximately 6 points a minute to avoid overloading the server.\n')
 		try:
 			n = int(inp2)
-		except Exception:
+			done = True
+		except ValueError:
 			print("Invalid number of points to sample")
-
+		try:
+			T
+		except NameError:
+			T = 90
+	done = False
+	while done != True:
+		inp3 = input('\nWould you like to consider a different maturity? (y/n)\nCurrent maturity: %s days   ' % (T))
 		try:
 			if inp3.lower() == 'y':
 				mat = input('\nNew maturity: ')
 				T = int(mat)
-			done = True
-		except Exception:
-			print("\nUnable to interpret at least one input. Please try again")
+				done = True
+			if inp3.lower() == 'n':
+				done = True
+		except ValueError:
+			print("\nUnable to interpret maturity. Please try again")
 	return n, Cid, T
 
 
-def random_calls(n, product_id, T):
-	# Generate random dates
+def random_calls():
+	""" Make call options out of historic price data with "maturity" T.
+		assume the value of the option is zero.
+	"""
+	n, product_id, T = prompt_samp()
+
 	def random_date_generator(start_date):
 		""" This function makes random dates from when the currency began.
 			Since we are considering option calls with maturity T=90 days,
@@ -123,35 +133,31 @@ def random_calls(n, product_id, T):
 			calls.sort()
 		return calls
 
-
-	if True: #args.exchange == "Coinbase":
-		public_client = gdax.PublicClient()
-		current_date = np.datetime64(public_client.get_time().get("iso").split('T')[0])
-
-		# Try to read in start dates from C_dates.csv
-		try:
-			with open("C_dates.csv", "r") as f:
-				dates = f.readlines()
-				for point in dates:
-					if point.split(", ")[0] == product_id:
-						start_date = str(point.split(", ")[1].strip("\n"))
-
-		except Exception: # if there are not yet start dates
-			from start_date import start_date
-			start_date(product_id)
-			random_calls(n)
-
-		# make the random dates
-		random_dates = random_date_generator(start_date)
-		# Make calls from the random dates
-		calls = make_calls(random_dates)
-		# Save the calls to a data file with today's date and the maturity
-		with open("call_data/%s_%s_%s.csv" % (product_id.split('-')[0], str(current_date), str(T)), "w") as f:
-			for call in calls:
-				f.write(call[0] + ', ' + str(call[1]) + ', ' + str(call[2]) + ', ' + str(call[3]) + '\n')
-	else:
-		print("This version is not configured to sample from Binance")
-		
+	# Do the thing
+	public_client = gdax.PublicClient()
+	current_date = np.datetime64(public_client.get_time().get("iso").split('T')[0])
+	# Try to read in start dates from C_dates.csv
+	try:
+		with open("C_dates.csv", "r") as f:
+			dates = f.readlines()
+			for point in dates:
+				if point.split(", ")[0] == product_id:
+					start_date = str(point.split(", ")[1].strip("\n"))
+	except Exception: # if there are not yet start dates
+		from start_date import start_date
+		start_date = start_date(product_id)
+		random_calls(n)
+	# make the random dates
+	random_dates = random_date_generator(start_date)
+	# Make calls from the random dates
+	calls = make_calls(random_dates)
+	# Save the calls to a data file with today's date and the maturity
+	with open("call_data/%s_%s_%s.csv" % (product_id.split('-')[0], str(current_date), str(T)), "w") as f:
+		for call in calls:
+			f.write(call[0] + ', ' + str(call[1]) + ', ' + str(call[2]) + ', ' + str(call[3]) + '\n')
+	
+##############################################################################
+	
 
 if __name__ == "__main__":
 	import argparse
@@ -163,29 +169,4 @@ if __name__ == "__main__":
 		choices=set(("Coinbase", "Binance")),
 		help="Exchange to take data from"
 	)
-	parser.add_argument(
-		"--id",
-		type=str,
-		default="BTC",
-		choices=set(("ETH", "BTC", "LTC", "BCH")),
-		help="Coin to get data for. By default gets USD data"
-	)
-	parser.add_argument(
-		"--n",
-		type=int,
-		default="50",
-		help="Number of calls to sample"
-	)
-	parser.add_argument(
-		"--T",
-		type=int,
-		default="90",
-		help="Maturity to sample"
-	)
-	args = parser.parse_args()
-	
-	n = args.n
-	T = args.T
-	Cid = args.id
-
-	random_calls(n, Cid, T)
+	random_calls()

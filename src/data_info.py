@@ -30,4 +30,3 @@ print('\nCoins available through Coinbase: ',C_symbols)
 B_symbols = list(set(dic.get('symbol') for dic in B_prices))
 print('\nTokens currently available through binance: %s  And %s more...\n' % (B_symbols[:7], len(B_symbols) - 7))
 
-print(C_prices)
